@@ -22,10 +22,10 @@ class Menu extends \yii\widgets\Menu
      * Styles all labels of items on sidebar by nifty
      */
     public $labelTemplate = '<span>{label}</span>';
+    public $collapseTemplate = '<a href="{url}">{icon} {label} <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
     public $submenuTemplate = "\n<ul class='treeview-menu' {show}>\n{items}\n</ul>\n";
     public $activateParents = true;
     public $defaultIconHtml = '<i class="fa fa-circle-o"></i> ';
-    public $collapseIconHtml = '<i class="fa fa-angle-left pull-right"></i>';
     public $options = ['class' => 'sidebar-menu', 'data-widget' => 'tree'];
 
     /**
@@ -75,8 +75,8 @@ class Menu extends \yii\widgets\Menu
     protected function renderItem($item)
     {
         if (isset($item['items'])) {
-            $labelTemplate = '<a href="{url}">{icon} {label} <span class="pull-right-container">' . $this->collapseIconHtml . '</span></a>';
-            $linkTemplate = '<a href="{url}">{icon} {label} <span class="pull-right-container">' . $this->collapseIconHtml . '</span></a>';
+            $labelTemplate = $this->collapseTemplate;
+            $linkTemplate = $this->collapseTemplate;
         } else {
             $labelTemplate = $this->labelTemplate;
             $linkTemplate = $this->linkTemplate;

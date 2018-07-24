@@ -1,9 +1,9 @@
-#Widgets for nifty theme
+# Widgets for nifty theme
 
  * Menu-widget
  * Flash-Alerts
 
-##Installation
+## Installation
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
@@ -22,7 +22,7 @@ to the require section of your `composer.json` file.
 ```php
 <?= \bscheshirwork\nifty\Menu::widget([
     'iconClassPrefix' => 'pli-',
-    'collapseIconHtml' => '<i class="arrow"></i>',
+    'collapseTemplate' => '<a href="{url}">{icon} <span class="menu-title">{label}</span> <i class="arrow"></i></a>',
     'defaultIconHtml' => '',
     'linkTemplate' => '<a href="{url}">{icon} <span class="menu-title">{label}</span></a>',
     'activateParents' => false,
