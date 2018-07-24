@@ -59,3 +59,28 @@ Yii::$app->session->setFlash('info3','Message3');
 Yii::$app->session->setFlash('success-first','Message');
 Yii::$app->session->setFlash('success-second','Message');
 ```
+
+## Translation
+
+You can add translation to main config
+```php
+    'components' => [
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => \yii\i18n\PhpMessageSource::class,
+                    'basePath' => '@common/messages',
+                ],
+                'app' => [
+                    'class' => \yii\i18n\PhpMessageSource::class,
+                    'basePath' => '@common/messages',
+                ],
+                'nifty' => [
+                    'class' => \yii\i18n\PhpMessageSource::class,
+                    'basePath' => '@vendor/bscheshirwork/yii2-nifty-widgets/messages',
+                ],
+            ],
+        ],
+    ],
+
+```
