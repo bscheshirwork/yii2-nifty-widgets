@@ -24,9 +24,14 @@ use Yii;
  */
 class FlashAlerts extends Widget
 {
+    /**@var bool $delete whether to delete the flash messages right after this method is called.
+     * If false, the flash messages will be automatically deleted in the next request.
+     */
+    public $delete = true;
+    
     /**@var boolean - Show close button for alert* */
     public $closable = true;
-    
+
     /**@var boolean - Encode flash messages?* */
     public $encode = true;
     
@@ -86,9 +91,9 @@ class FlashAlerts extends Widget
      */
     public function run()
     {
-        $allflash = Yii::$app->session->getAllFlashes();
+        $allFlashes = Yii::$app->session->getAllFlashes($this->delete);
         $messages = '';
-        foreach ($allflash as $key => $message) {
+        foreach ($allFlashes as $key => $message) {
             $flashStyle = 'info';
             foreach ($this->styleParts as $kp) {
                 if (strpos($key, $kp) !== false) {

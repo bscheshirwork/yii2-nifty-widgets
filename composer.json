@@ -1,6 +1,6 @@
 {
     "name":        "bscheshirwork/yii2-nifty-widgets" ,
-    "description": "Widgets for nifty theme (Alert, Menu)" ,
+    "description": "Widgets for nifty theme (Alert, Menu, jsCookie)" ,
     "type":        "yii2-extension" ,
     "keywords":    [ "yii2" , "widget" , "nifty" ] ,
     "license":     "MIT" ,
