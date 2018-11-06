@@ -82,5 +82,27 @@ You can add translation to main config
             ],
         ],
     ],
+```
 
+## Gii
+
+You can add generators to main-local config
+```php
+    $config['modules']['gii'] = [
+        'class' => 'yii\gii\Module',
+        'generators' => [
+            'model' => [ // generator name
+                'class' => \bscheshirwork\nifty\generators\model\Generator::class,
+                'templates' => [
+                    'default' => '@bscheshirwork/nifty/generators/model/nifty', // template name => alias + path to template
+                ],
+            ],
+            'crud' => [
+                'class' => \bscheshirwork\nifty\generators\crud\Generator::class,
+                'templates' => [
+                    'default' => '@bscheshirwork/nifty/generators/crud/nifty',
+                ],
+            ],
+        ],
+    ];
 ```
