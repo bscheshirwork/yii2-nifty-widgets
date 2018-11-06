@@ -23,7 +23,7 @@ class Menu extends \yii\widgets\Menu
      */
     public $labelTemplate = '<span>{label}</span>';
     public $collapseTemplate = '<a href="{url}">{icon} {label} <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
-    public $submenuTemplate = "\n<ul class='treeview-menu' {show}>\n{items}\n</ul>\n";
+    public $submenuTemplate = "\n<ul class='treeview-menu'>\n{items}\n</ul>\n";
     public $activateParents = true;
     public $defaultIconHtml = '<i class="fa fa-circle-o"></i> ';
     public $options = ['class' => 'sidebar-menu', 'data-widget' => 'tree'];
@@ -126,7 +126,6 @@ class Menu extends \yii\widgets\Menu
             $menu = $this->renderItem($item);
             if (!empty($item['items'])) {
                 $menu .= strtr($this->submenuTemplate, [
-                    '{show}' => $item['active'] ? "style='display: block'" : '',
                     '{items}' => $this->renderItems($item['items']),
                 ]);
 				if (isset($options['class'])) {
