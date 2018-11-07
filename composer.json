@@ -1,22 +1,29 @@
 {
-    "name":        "bscheshirwork/yii2-nifty-widgets" ,
-    "description": "Widgets for nifty theme (Alert, Menu, jsCookie)" ,
-    "type":        "yii2-extension" ,
-    "keywords":    [ "yii2" , "widget" , "nifty" ] ,
-    "license":     "MIT" ,
-    "authors":     [
-        {
-            "name":  "BSCheshir" ,
-            "email": "bscheshir.work@gmail.com"
-        }
-    ] ,
-    "require":     {
-        "yiisoft/yii2":          ">=2.0.15" ,
-        "bower-asset/js-cookie": "~2.1.0"
-    } ,
-    "autoload":    {
-        "psr-4": {
-            "bscheshirwork\\nifty\\": "src"
-        }
+  "name": "bscheshirwork/yii2-nifty-widgets",
+  "description": "Widgets for nifty theme (Alert, Menu, jsCookie)",
+  "type": "yii2-extension",
+  "keywords": [
+    "yii2",
+    "widget",
+    "nifty"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "BSCheshir",
+      "email": "bscheshir.work@gmail.com"
     }
+  ],
+  "require": {
+    "yiisoft/yii2": ">=2.0.15",
+    "bower-asset/js-cookie": "~2.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "bscheshirwork\\nifty\\": "src"
+    }
+  },
+  "extra": {
+    "bootstrap": "bscheshirwork\\nifty\\messages\\Bootstrap"
+  }
 }
