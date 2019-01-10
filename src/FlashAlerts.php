@@ -2,19 +2,20 @@
 
 namespace bscheshirwork\nifty;
 
+use yii\base\InvalidConfigException;
 use yii\bootstrap\Widget;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 use Yii;
+use yii\helpers\Json;
 
 /**
- *  Flash messages with nifty style and support multiple flash similar style
+ *  Flash messages with nifty style and support multiple flash
  *
  * @example
  * add
  *
  *   In layout
- *    <?=\bscheshirwork\nifty\FlashAlerts::widget([]);?>
+ *    <?=\bscheshirwork\nifty\FlashAlerts::widget(['clientOptions' => ['closeBtn' => false, 'timer' => 5000]]);?>
  *
  *   In controllers
  *    Yii::$app->session->setFlash('warning','Message1',true);
@@ -24,119 +25,78 @@ use Yii;
  */
 class FlashAlerts extends Widget
 {
-    /**@var bool $delete whether to delete the flash messages right after this method is called.
+    /**
+     * @var bool $delete whether to delete the flash messages right after this method is called.
      * If false, the flash messages will be automatically deleted in the next request.
      */
     public $delete = true;
-    
-    /**@var boolean - Show close button for alert* */
-    public $closable = true;
 
-    /**@var boolean - Encode flash messages?* */
-    public $encode = true;
-    
-    /**@var boolean - Wrap message in <b> tag?* */
-    public $bold = true;
-    
-    public $successIcon = '<i class="fa fa-lg fa-smile-o"></i>';
-    
-    public $errorIcon = '<i class="fa fa-lg fa-frown-o"></i>';
-    
-    public $warningIcon = '<i class="fa fa-lg fa-volume-up"></i>';
-    
-    public $infoIcon = '<i class="fa fa-lg fa-info-circle"></i>';
-    
-    public $successTitle = 'Success! ';
-    
-    public $errorTitle = 'Error! ';
-    
-    public $warningTitle = 'Alert! ';
-    
-    public $infoTitle = 'Info ';
-    
-    private $classes;
-    
-    private $styleParts;
-    
-    private $icons;
-    
     /**
-     * @var
-     */
-    private $titles;
-    
-    /**
+     * @var array
+     * Options of $.niftyNoty()
+     * We must pass options as php array ['key' => 'value'] to convert it into js object "{key:value}"
+     * note: some values (message, html) will be redefine on live
+     * We can't pass string value with pure json "{key:value}" format for this reason.
      *
+     * @see nifty-v2.9.1/documentation/js/docs.js:80
+     * @see nifty-v2.9.1/documentation/index.html#docs-noty
+     * Options
+     * Name         Type    Default        Description
+     * --------------------------------
+     * type         string    primary     The type of notification. Example: primary info success warning danger mint purple pink dark
+     * icon         string    null        Icon class names
+     * title        string    null        The title of notification
+     * message      string    null        The message of notification
+     * closeBtn     boolean   true        Show or hide the close button.
+     * container    string    page        This option is particularly useful in that it allows you to position the notification.
+     *                                    Example : page floating "specified target name"
+     * floating: {
+     *   position
+     * }            string    top-right   Floating position.
+     *                                    top-right, top-center, top-left, center-right, center-center, center-left, bottom-right, bottom-center, bottom-left
+     * floating: {
+     *   animationIn
+     * }            string    jellyIn     Apply a CSS animation to the notification
+     * floating: {
+     *   animationOut
+     * }            string    fadeOut     Apply a CSS animation to the notification
+     * html         string    null        Insert HTML into the notification. If false, jQuery's text method will be used to insert content into the DOM.
+     * focus        boolean   true        Scroll to the notification.
+     * timer        Number    0           To enable the "auto close" notofication, please specify the time to show the notification before it closed.
+     *                                    Value is in milliseconds. (0 to disable the autoclose.)
+     *
+     * Also can accept a actions. Use JsExpression for pass callback function
+     * @see nifty-v2.9.1/documentation/js/docs.js:135
+     */
+    public $clientOptions = [];
+
+    /**
+     * {@inheritdoc}
      */
     public function init()
     {
-        $this->classes = ['success' => 'success', 'error' => 'danger', 'info' => 'info', 'warning' => 'warning'];
-        $this->styleParts = array_keys($this->classes);
-        $this->icons = [
-            'success' => $this->successIcon,
-            'error' => $this->errorIcon,
-            'info' => $this->infoIcon,
-            'warning' => $this->warningIcon,
-        ];
-        $this->titles = [
-            'success' => Yii::t('nifty', $this->successTitle),
-            'error' => Yii::t('nifty', $this->errorTitle),
-            'info' => Yii::t('nifty', $this->infoTitle),
-            'warning' => Yii::t('nifty', $this->warningTitle),
-        ];
+        if (!is_array($this->clientOptions)) {
+            throw new InvalidConfigException('clientOptions must be a php array!');
+        }
     }
-    
+
     /**
      * @return string
      */
     public function run()
     {
         $allFlashes = Yii::$app->session->getAllFlashes($this->delete);
-        $messages = '';
-        foreach ($allFlashes as $key => $message) {
-            $flashStyle = 'info';
-            foreach ($this->styleParts as $kp) {
-                if (strpos($key, $kp) !== false) {
-                    $flashStyle = $kp;
-                    break;
-                }
-            }
-            
-            Html::addCssClass($this->options, 'alert');
-            Html::addCssClass($this->options, 'alert-' . ArrayHelper::getValue($this->classes, $flashStyle, 'info'));
-            if ($this->closable) {
-                Html::addCssClass($this->options, 'alert-dismissable');
-            }
-            if (is_array($message)) {
-                foreach ($message as $submess) {
-                    $messages .= $this->buildMessage($flashStyle, $submess);
-                }
-            } elseif ($message) {
-                $messages .= $this->buildMessage($flashStyle, $message);
-            }
+        foreach ($allFlashes as $category => $message) {
+            $options = ArrayHelper::merge($this->clientOptions, [
+                'type' => $category,
+                'message' => $message,
+            ]);
+            $options = Json::htmlEncode($options);
+            $view = $this->getView();
+            $view->registerJs("$.niftyNoty($options);", $view::POS_READY);
         }
-        return $messages;
+
+        return '';
     }
-    
-    /**
-     * @param $flashStyle
-     * @param $text
-     *
-     * @return string
-     */
-    protected function buildMessage($flashStyle, $text)
-    {
-        $text = !$this->encode ? $text : Html::encode($text);
-        return Html::tag(
-            'div',
-            ArrayHelper::getValue($this->icons, $flashStyle, '')
-            . (!$this->closable ? ''
-                : '<button class="close" aria-hidden="true" data-dismiss="alert" type="button">x</button>')
-            . (isset($this->titles[$flashStyle]) ? Html::tag('b', $this->titles[$flashStyle]) : '') . ' '
-            . (!$this->bold ? $text : Html::tag('b', $text))
-            ,
-            $this->options
-        );
-    }
-    
+
 }
