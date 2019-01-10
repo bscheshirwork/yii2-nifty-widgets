@@ -5,6 +5,7 @@
 
 use yii\db\ActiveRecordInterface;
 use yii\helpers\StringHelper;
+use yii\helpers\Inflector;
 
 
 /* @var $this yii\web\View */
@@ -12,6 +13,7 @@ use yii\helpers\StringHelper;
 
 $controllerClass = StringHelper::basename($generator->controllerClass);
 $modelClass = StringHelper::basename($generator->modelClass);
+$modelClassName = Inflector::camel2words($modelClass);
 $searchModelClass = StringHelper::basename($generator->searchModelClass);
 if ($modelClass === $searchModelClass) {
     $searchModelAlias = $searchModelClass . 'Search';
@@ -96,22 +98,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     }
 
     /**
-     * Displays a single <?= $modelClass ?> model.
-     * <?= implode("\n     * ", $actionParamComments) . "\n" ?>
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionView(<?= $actionParams ?>)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel(<?= $actionParams ?>),
-        ]);
-    }
-
-    /**
      * Creates a new <?= $modelClass ?> model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'update' page.
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
@@ -120,7 +108,9 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         $model = Yii::createObject(<?= $modelClass ?>::class);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', <?= $urlParams ?>]);
+            Yii::$app->getSession()->setFlash('success', <?= $generator->generateString('The ' . $modelClassName . ' was successfully created.') ?>);
+
+            return $this->redirect(['update', <?= $urlParams ?>]);
         }
 
         return $this->render('create', [
@@ -130,7 +120,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
     /**
      * Updates an existing <?= $modelClass ?> model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'update' page.
      * <?= implode("\n     * ", $actionParamComments) . "\n" ?>
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -141,7 +131,9 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         $model = $this->findModel(<?= $actionParams ?>);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', <?= $urlParams ?>]);
+            Yii::$app->getSession()->setFlash('success', <?= $generator->generateString('The ' . $modelClassName . ' was successfully saved.') ?>);
+
+            return $this->redirect(['update', <?= $urlParams ?>]);
         }
 
         return $this->render('update', [
