@@ -72,29 +72,39 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     }
 
     /**
+     * Prepare index content. Lists all <?= $modelClass ?> models for indexAction and masqueraded actions.
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function prepareIndex()
+    {
+<?php if (!empty($generator->searchModelClass)): ?>
+        $searchModel = Yii::createObject(<?= isset($searchModelAlias) ? $searchModelAlias : $searchModelClass ?>::class);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ];
+<?php else: ?>
+        $dataProvider = new ActiveDataProvider([
+            'query' => Yii::createObject(<?= $modelClass ?>::class)::find(),
+        ]);
+
+        return [
+            'dataProvider' => $dataProvider,
+        );
+<?php endif; ?>
+    }
+
+    /**
      * Lists all <?= $modelClass ?> models.
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
     public function actionIndex()
     {
-<?php if (!empty($generator->searchModelClass)): ?>
-        $searchModel = Yii::createObject(<?= isset($searchModelAlias) ? $searchModelAlias : $searchModelClass ?>::class);
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-<?php else: ?>
-        $dataProvider = new ActiveDataProvider([
-            'query' => Yii::createObject(<?= $modelClass ?>::class)::find(),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
-<?php endif; ?>
+        return $this->render('index', $this->prepareIndex());
     }
 
     /**
