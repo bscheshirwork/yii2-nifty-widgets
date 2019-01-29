@@ -175,7 +175,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
      * @throws NotFoundHttpException if the model cannot be found
      * @throws \yii\base\InvalidConfigException
      */
-    protected function findModel(<?= $actionParams ?>)
+    public function findModel(<?= $actionParams ?>)
     {
 <?php
 if (count($pks) === 1) {
